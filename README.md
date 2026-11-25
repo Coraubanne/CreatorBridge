@@ -2,6 +2,8 @@
 
 Creator Bridge est le pont UXP partagé qui importe dans Adobe Premiere Pro les médias produits par ClipFlow et les captures PNG produites par Capture8K.
 
+Le [guide de référence Creator Bridge](docs/GUIDE.md) décrit l’utilisation dans Premiere Pro, l’ajout d’une application compatible et la publication des mises à jour du module partagé.
+
 ## Principes
 
 - un seul identifiant technique conservé pour la compatibilité : `fr.clipflow.premiere.bridge` ;
