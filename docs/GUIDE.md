@@ -2,6 +2,8 @@
 
 Creator Bridge importe dans le projet Premiere Pro actif les fichiers préparés par des applications telles que ClipFlow et Capture8K. Ce guide explique comment utiliser le panneau, raccorder une autre application et faire évoluer le module partagé en préservant les intégrations existantes.
 
+Pour intégrer le plugin dans une nouvelle extension, commencez par [les consignes pour Codex et Claude Code](../AGENTS.md) et le [contrat d’intégration](INTEGRATION.md). Le contrat précise les conditions de recherche d’une mise à jour et les tests à réussir avant publication.
+
 ## Utiliser Creator Bridge dans Premiere Pro
 
 1. Installez l’application compatible et son compagnon macOS. Creator Bridge s’installe dans le compte utilisateur selon le mode de distribution de l’application.

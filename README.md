@@ -18,4 +18,6 @@ ClipFlow et Capture8K embarquent une version précise de Creator Bridge dans leu
 
 ## Développement
 
+Pour intégrer Creator Bridge dans une extension avec Codex ou Claude Code, lisez [AGENTS.md](AGENTS.md) et le [contrat d’intégration](docs/INTEGRATION.md). Ils décrivent les règles obligatoires et les tests de conformité.
+
 Le dossier contient directement le paquet UXP. Le numéro de version dans `manifest.json` est la référence utilisée par les installateurs anti-doublon.
