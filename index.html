@@ -1,17 +1,32 @@
 <!doctype html>
-<html>
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body data-state="waiting">
-    <main>
-      <div class="mark" aria-hidden="true">CB</div>
-      <div class="copy">
-        <strong id="status">Connexion à Premiere Pro…</strong>
-        <span id="project">Ouvrez un projet enregistré.</span>
+  <body>
+    <div class="panel">
+      <div class="project-card" id="project-card" data-state="waiting">
+        <div class="project-header">
+          <span class="caption">Projet actif</span>
+          <span id="connection" class="connection">En attente</span>
+        </div>
+        <p id="project" class="project-name">Connexion à Premiere Pro…</p>
       </div>
-    </main>
+      <div id="import-card" class="import-card" aria-live="polite">
+        <span class="caption">Dernier import</span>
+        <p id="import-status"></p>
+      </div>
+      <div class="updates">
+        <div class="update-header">
+          <span class="caption">Creator Bridge</span>
+          <span id="bridge-version" class="version"></span>
+        </div>
+        <sp-button id="check-update" variant="secondary">Chercher une mise à jour</sp-button>
+        <p id="update-status" class="update-status" aria-live="polite"></p>
+        <sp-link id="release-link" class="release-link">Voir la version sur GitHub</sp-link>
+      </div>
+    </div>
     <script src="index.js"></script>
   </body>
 </html>

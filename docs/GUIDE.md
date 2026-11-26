@@ -84,7 +84,9 @@ Gardez les accès au système de fichiers et la validation des chemins dans le c
 
 ### Déclenchement de la mise à jour
 
-**La destination Premiere Pro doit être active dans l’application** pour rechercher et proposer une mise à jour de Creator Bridge. Avec **Téléchargements** ou un dossier personnalisé, l’action **Chercher une mise à jour** vérifie uniquement l’application elle-même.
+Dans le panneau Creator Bridge de Premiere Pro, **Chercher une mise à jour** consulte le dépôt Creator Bridge et affiche la version disponible. La vérification est manuelle et fonctionne même sans projet ouvert. Si une version est disponible, le lien ouvre sa page GitHub. Le fichier CCX peut être ouvert avec Creative Cloud. Les applications compatibles proposent aussi leur parcours d’installation.
+
+**Depuis une application compatible, la destination Premiere Pro doit être active** pour rechercher et proposer une mise à jour de Creator Bridge. Avec **Téléchargements** ou un dossier personnalisé, l’action **Chercher une mise à jour** vérifie uniquement l’application elle-même.
 
 1. Lorsque l’utilisateur lance la vérification, consultez la dernière release stable de l’application et, si la destination Premiere Pro est active, celle de Creator Bridge sur son propre dépôt. Chaque vérification doit pouvoir aboutir même si l’autre échoue.
 2. Proposez **Installer Creator Bridge** uniquement si le compagnon trouve une version installable plus récente que la copie locale. Une absence de release stable laisse la copie locale disponible. Si l’utilisateur change de destination, retirez la proposition.

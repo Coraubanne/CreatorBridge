@@ -16,6 +16,8 @@ Creator Bridge processes import requests locally. Both apps share the same panel
 
 ## Updates
 
+In the Creator Bridge panel in Premiere, click **Chercher une mise à jour**. The panel checks its own version and offers a link to the GitHub release when an update is available.
+
 Select **Premiere Pro** as the destination in ClipFlow or Capture8K, then click **Check for updates**. If a new panel version is available, the extension shows a separate **Install Creator Bridge** button.
 
 Both apps use the latest valid installed copy. After updating, restart Premiere Pro if it was running, then reopen the panel. [Update behavior (French)](docs/GUIDE.md#installer-et-mettre-à-jour-le-plugin-partagé)

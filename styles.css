@@ -1,9 +1,122 @@
-:root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f5f5f7; }
-body { margin: 0; background: #202124; }
-main { align-items: center; display: flex; gap: 12px; min-height: 86px; padding: 14px; }
-.mark { align-items: center; background: linear-gradient(145deg, #2b98ff, #0068d9); border-radius: 14px; color: white; display: flex; flex: 0 0 44px; font-size: 13px; font-weight: 800; height: 44px; justify-content: center; }
-.copy { display: flex; flex-direction: column; min-width: 0; }
-strong { font-size: 13px; line-height: 1.35; }
-span { color: #aeb0b7; font-size: 11px; line-height: 1.4; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-body[data-state="error"] .mark { background: #c9354c; }
-body[data-state="ready"] .mark { background: linear-gradient(145deg, #27a86b, #087f55); }
+:root {
+  --bg: #202124;
+  --surface: #2a2c31;
+  --text: #f3f4f6;
+  --muted: #b7bcc7;
+  --ready-bg: #214436;
+  --ready-text: #a6e2bd;
+  --warning-bg: #463923;
+  --warning-text: #f3d899;
+  --error-bg: #4b2932;
+  --error-text: #ffbecb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+  :root {
+    --bg: #f0f1f4;
+    --surface: #ffffff;
+    --text: #202329;
+    --muted: #535d6f;
+    --ready-bg: #dcf1e2;
+    --ready-text: #215338;
+    --warning-bg: #f4ead1;
+    --warning-text: #654914;
+    --error-bg: #f9e0e6;
+    --error-text: #842e49;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+.panel {
+  padding: 12px;
+}
+
+.project-card, .import-card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.project-header, .update-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.caption, .version {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.caption {
+  font-weight: 600;
+}
+
+.connection {
+  border-radius: 12px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 10px;
+  padding: 3px 7px;
+}
+
+.project-card[data-state="ready"] .connection {
+  background: var(--ready-bg);
+  color: var(--ready-text);
+}
+
+.project-card[data-state="error"] .connection {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+p {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.project-name {
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.import-card {
+  display: none;
+  margin-top: 8px;
+}
+
+.import-card p {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.import-card[data-state="error"] p, .update-status[data-state="error"] {
+  color: var(--error-text);
+}
+
+.updates {
+  margin-top: 12px;
+  padding: 0 2px;
+}
+
+.update-status {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.release-link {
+  display: none;
+  margin-top: 4px;
+  font-size: 11px;
+}

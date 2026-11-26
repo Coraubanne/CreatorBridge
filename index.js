@@ -5,13 +5,92 @@ const fs = require("fs");
 const IMPORTS_DIRECTORY = "plugin-data:/Imports";
 const RESULTS_DIRECTORY = "plugin-data:/Results";
 const ACTIVE_PROJECT_PATH = "plugin-data:/active-project.json";
+const BRIDGE_VERSION = "1.2.0";
+const RELEASES_URL = "https://api.github.com/repos/Coraubanne/CreatorBridge/releases/latest";
+const RELEASE_PAGE = "https://github.com/Coraubanne/CreatorBridge/releases/tag/";
+const SEMVER = /^v?(0|[1-9]\d{0,7})\.(0|[1-9]\d{0,7})\.(0|[1-9]\d{0,7})$/;
+const checkButton = document.getElementById("check-update");
+const releaseLink = document.getElementById("release-link");
+const updateStatus = document.getElementById("update-status");
 let timer = null;
 let busy = false;
+let checkingUpdate = false;
+let activeProjectPath = "";
 
-function setStatus(state, title, detail) {
-  document.body.dataset.state = state;
-  document.getElementById("status").textContent = title;
-  document.getElementById("project").textContent = detail;
+function setText(element, value) {
+  if (element.textContent !== value) element.textContent = value;
+}
+
+function setProject(state, connection, name, path) {
+  if (path !== undefined && path !== activeProjectPath) {
+    activeProjectPath = path;
+    document.getElementById("import-card").style.display = "none";
+  }
+  document.getElementById("project-card").dataset.state = state;
+  setText(document.getElementById("connection"), connection);
+  setText(document.getElementById("project"), name);
+}
+
+function setImportStatus(state, message) {
+  const card = document.getElementById("import-card");
+  card.dataset.state = state;
+  setText(document.getElementById("import-status"), message);
+  card.style.display = "block";
+}
+
+function compareVersions(left, right) {
+  const a = left.match(SEMVER).slice(1).map(Number);
+  const b = right.match(SEMVER).slice(1).map(Number);
+  return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+}
+
+async function checkForUpdate() {
+  if (checkingUpdate) return;
+  checkingUpdate = true;
+  checkButton.setAttribute("disabled", "");
+  releaseLink.style.display = "none";
+  releaseLink.removeAttribute("href");
+  updateStatus.dataset.state = "checking";
+  setText(updateStatus, "Recherche en cours…");
+
+  let timeout;
+  try {
+    const controller = new AbortController();
+    timeout = setTimeout(() => controller.abort(), 10000);
+    const response = await fetch(RELEASES_URL, {
+      headers: { Accept: "application/vnd.github+json" },
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error("GitHub inaccessible");
+    const release = await response.json();
+    const tag = release?.tag_name;
+    if (release?.draft !== false || release.prerelease !== false
+        || typeof tag !== "string" || !tag.startsWith("v") || !SEMVER.test(tag)) {
+      throw new Error("Version invalide");
+    }
+    if (compareVersions(tag, BRIDGE_VERSION) <= 0) {
+      updateStatus.dataset.state = "ready";
+      setText(updateStatus, "Creator Bridge est à jour.");
+      return;
+    }
+    const archive = Array.isArray(release.assets) && release.assets.some((asset) =>
+      asset?.name === `CreatorBridge-${tag}.zip` && asset.state === "uploaded"
+      && /^sha256:[0-9a-f]{64}$/.test(asset.digest)
+    );
+    if (!archive) throw new Error("Archive manquante ou empreinte indisponible");
+
+    updateStatus.dataset.state = "available";
+    setText(updateStatus, `Version ${tag.slice(1)} disponible.`);
+    releaseLink.setAttribute("href", `${RELEASE_PAGE}${tag}`);
+    releaseLink.style.display = "inline-block";
+  } catch (error) {
+    updateStatus.dataset.state = "error";
+    setText(updateStatus, "Vérification impossible. Réessayez dans un instant.");
+  } finally {
+    clearTimeout(timeout);
+    checkButton.removeAttribute("disabled");
+    checkingUpdate = false;
+  }
 }
 
 async function ensureDirectories() {
@@ -65,10 +144,10 @@ async function importNextJob(project) {
       const imported = await project.importFiles([job.mediaPath], true, rootItem, false);
       if (!imported) throw new Error("Premiere Pro a refusé le fichier.");
       await finishJob(jobPath, job, "complete", `${producer} · fichier ajouté au projet`);
-      setStatus("ready", "Creator Bridge connecté", `${project.name} · import ${producer} terminé`);
+      setImportStatus("complete", `${producer} · fichier ajouté au projet`);
     } catch (error) {
       await finishJob(jobPath, job, "error", String(error.message || error));
-      setStatus("error", "Import impossible", String(error.message || error));
+      setImportStatus("error", `${producer} · ${error.message || error}`);
     }
     break;
   }
@@ -81,23 +160,23 @@ async function tick() {
     await ensureDirectories();
     const project = await ppro.Project.getActiveProject();
     if (!project || !project.path || !String(project.path).toLowerCase().endsWith(".prproj")) {
-      setStatus("waiting", "Projet non enregistré", "Enregistrez le projet pour activer Creator Bridge.");
+      setProject("waiting", "En attente", "Ouvrez un projet enregistré.", "");
       return;
     }
     await writeJson(ACTIVE_PROJECT_PATH, {
       schemaVersion: 1,
       bridgeName: "Creator Bridge",
-      bridgeVersion: "1.1.0",
+      bridgeVersion: BRIDGE_VERSION,
       producers: ["clipflow", "capture8k"],
       projectPath: project.path,
       projectName: project.name,
       projectGuid: String(project.guid || ""),
       updatedAt: Date.now()
     });
-    setStatus("ready", "Creator Bridge connecté", project.name || project.path);
+    setProject("ready", "Connecté", project.name || fileStem(project.path), normalizedPath(project.path));
     await importNextJob(project);
   } catch (error) {
-    setStatus("error", "Creator Bridge indisponible", String(error.message || error));
+    setProject("error", "Indisponible", String(error.message || error));
   } finally { busy = false; }
 }
 
@@ -107,6 +186,9 @@ function startBridge() {
   timer = setInterval(tick, 1000);
 }
 function stopBridge() { if (timer !== null) clearInterval(timer); timer = null; }
+
+setText(document.getElementById("bridge-version"), `v${BRIDGE_VERSION}`);
+checkButton.addEventListener("click", checkForUpdate);
 
 entrypoints.setup({
   plugin: { create: startBridge, destroy: stopBridge },
