@@ -3,7 +3,7 @@
   "id": "fr.clipflow.premiere.bridge",
   "name": "Creator Bridge",
   "shortname": "Creator Bridge",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "index.html",
   "host": {
     "app": "premierepro",
